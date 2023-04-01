@@ -36,6 +36,10 @@ class MyMainWindow(QMainWindow):
         gui.populate_config_template_files(self)
         self.pushButton_extract_config.clicked.connect(lambda:gui.extract_config_template(self))
         self.pushButton_search.clicked.connect(lambda:gui.parse_query_conditions(self))
+        self.pushButton_select_all.clicked.connect(lambda:gui.select_all(self))
+        self.pushButton_select_none.clicked.connect(lambda:gui.select_none(self))
+        self.pushButton_load_data_locally.clicked.connect(lambda:gui.load_csv_file(self))
+        self.pushButton_plot.clicked.connect(lambda:gui.plot_processed_data(self))
 
 @click.command()
 @click.option('--ui', default='beamtime_manager.ui',help="main gui ui file generated from Qt Desinger, possible ui files are :")

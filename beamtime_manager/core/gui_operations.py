@@ -1,7 +1,14 @@
+from functools import partial
+import numpy as np
+import PyQt5
+import re
+from PyQt5.QtWidgets import QFileDialog
+import pandas as pd
 from pathlib import Path
 from os import listdir
 from .db_operations import logical_query, init_pandas_model_from_db
 from ..config import config
+from ..core.util import PandasModel
 
 def populate_config_template_files(self):
     root = Path(__file__).parent.parent/ "resources" / "templates"
@@ -19,5 +26,43 @@ def parse_query_conditions(self):
     fields = [each for each in config.display_fields if each!='select']
     targets = logical_query(self,'scan_info',logic,left_field,right_field,fields)
     init_pandas_model_from_db(self,targets)
+
+def select_all(self):
+    self.pandas_model_scan_info._data['select'] = True
+
+def select_none(self):
+    self.pandas_model_scan_info._data['select'] = False
+
+def load_csv_file(self, header = 0, sep = ','):
+    options = QFileDialog.Options()
+    options |= QFileDialog.DontUseNativeDialog
+    fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","csv Files (*.csv);;text Files (*.txt)", options=options)
+    if fileName:
+        data = pd.read_csv(fileName, sep = ',', header = 0)
+        data.insert(0, column = 'select', value = False)
+        self.pandas_model_processed_data_info = PandasModel(data = data, tableviewer = self.tableView_processed_data, main_gui = self)
+        self.tableView_processed_data.setModel(self.pandas_model_processed_data_info)
+        self.tableView_processed_data.resizeColumnsToContents()
+        self.tableView_processed_data.setSelectionBehavior(PyQt5.QtWidgets.QAbstractItemView.SelectRows)
+        self.tableView_processed_data.horizontalHeader().setStretchLastSection(True)
+
+def plot_processed_data(self):
+    conditions, x, y = self.lineEdit_conditions.text(),self.lineEdit_x.text(), self.lineEdit_y.text()
+    pattern = re.compile(r'(\w+)([<,>,=]=?)(\d+\.?\d*)([&,|])?')
+    groups = pattern.findall(conditions.replace(' ',''))
+    shared_head = '(self.pandas_model_processed_data_info._data["{}"]{}{}) {}'
+    final_str = ''
+    for group in groups:
+        final_str=final_str+shared_head.format(*group)
+    complete_str = 'self.pandas_model_processed_data_info._data[{}].index'.format(final_str)
+    index = eval(complete_str)
+    x_value = np.array(self.pandas_model_processed_data_info._data[x][index])
+    y_value = np.array(self.pandas_model_processed_data_info._data[y][index])
+    self.widget_plot.clear()
+    self.plot = self.widget_plot.addPlot(title=conditions)
+    self.plot.plot(x_value, y_value, pen = {'color': "g", 'width': 2}, symbol='+', symbolPen=None, symbolSize=5, symbolBrush=(100, 100, 255, 50))
+    self.plot.setLabel('left', "Y Axis", units='A')
+    self.plot.setLabel('bottom', "Y Axis", units='s')
+    self.plot.setLogMode(x=False, y=True)
 
 

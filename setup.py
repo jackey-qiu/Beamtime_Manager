@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     # packages=find_packages(where='library_manager'),
     # package_dir={'': 'library_lanager'},
-    package_data={'':['*.ui','*.svg','*.qss','*.xml','*.png','*.dot','*.ini'],'.beamtime_manager.resources':['icons/*.*','private/*.*','templates/*.ini']},
+    package_data={'':['*.ui','*.svg','*.qss','*.xml','*.pngd','*.dot','*.ini','*.csv'],'beamtime_manager.resources':['icons/*.*','private/*.*','templates/*.ini']},
     scripts=['./beamtime_manager/bin/manager_gui.py'],
     entry_points = {
         'console_scripts' : [
