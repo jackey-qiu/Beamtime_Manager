@@ -15,6 +15,7 @@ class MyMainWindow(QMainWindow):
     def init_gui(self, ui):
         self.ui = ui
         uic.loadUi(ui, self)
+        gui.populate_config_template_files(self)
         self.statusbar = self.statusBar()
         self.statusLabel = QLabel(f"Welcome to ccg lib management system!")
         self.statusbar.addPermanentWidget(self.statusLabel)
@@ -33,12 +34,12 @@ class MyMainWindow(QMainWindow):
         self.pushButton_delete_sample.clicked.connect(lambda:db.delete_one_sample(self))
         self.comboBox_sample_ids.activated.connect(lambda:db.extract_sample_info(self))
         self.comboBox_sample_ids.activated.connect(lambda:db.init_pandas_model_from_db(self))
-        gui.populate_config_template_files(self)
         self.pushButton_extract_config.clicked.connect(lambda:gui.extract_config_template(self))
         self.pushButton_search.clicked.connect(lambda:gui.parse_query_conditions(self))
         self.pushButton_select_all.clicked.connect(lambda:gui.select_all(self))
         self.pushButton_select_none.clicked.connect(lambda:gui.select_none(self))
         self.pushButton_load_data_locally.clicked.connect(lambda:gui.load_csv_file(self))
+        self.pushButton_save_local.clicked.connect(lambda:gui.save_csv_file(self))
         self.pushButton_plot.clicked.connect(lambda:gui.plot_processed_data(self))
         self.pushButton_save_cloud.clicked.connect(lambda:db.save_processed_data_to_cloud(self))
         self.pushButton_load_from_cloud.clicked.connect(lambda:db.load_processed_data_from_cloud(self))

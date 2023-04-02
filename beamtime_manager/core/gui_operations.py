@@ -2,6 +2,7 @@ from functools import partial
 import numpy as np
 import PyQt5
 import re
+import pyqtgraph as pg
 from PyQt5.QtWidgets import QFileDialog
 import pandas as pd
 from pathlib import Path
@@ -9,6 +10,7 @@ from os import listdir
 from .db_operations import logical_query, init_pandas_model_from_db
 from ..config import config
 from ..core.util import PandasModel
+from .util import error_pop_up        
 
 def populate_config_template_files(self):
     root = Path(__file__).parent.parent/ "resources" / "templates"
@@ -46,6 +48,23 @@ def load_csv_file(self, header = 0, sep = ','):
         self.tableView_processed_data.setSelectionBehavior(PyQt5.QtWidgets.QAbstractItemView.SelectRows)
         self.tableView_processed_data.horizontalHeader().setStretchLastSection(True)
 
+def save_csv_file(self):
+    options = QFileDialog.Options()
+    options |= QFileDialog.DontUseNativeDialog
+    fileName, _ = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()", "","csv Files (*.csv);;text Files (*.txt)", options=options)
+    if fileName:
+        columns = self.lineEdit_channels.text()
+        try:
+            if columns!='':
+                columns = columns.replace(' ','').rsplit(',')
+                self.pandas_model_processed_data_info._data.to_csv(fileName, index = False, columns = columns)
+            else:
+                self.pandas_model_processed_data_info._data.to_csv(fileName, index = False)
+            self.statusbar.clearMessage()
+            self.statusbar.showMessage('Success to update processed data to cloud!')
+        except Exception as e:
+            error_pop_up('Fail to save csv file due to:'+str(e))
+
 def plot_processed_data(self):
     conditions, x, y = self.lineEdit_conditions.text(),self.lineEdit_x.text(), self.lineEdit_y.text()
     pattern = re.compile(r'(\w+)([<,>,=]=?)(\d+\.?\d*)([&,|])?')
@@ -60,7 +79,14 @@ def plot_processed_data(self):
     y_value = np.array(self.pandas_model_processed_data_info._data[y][index])
     self.widget_plot.clear()
     self.plot = self.widget_plot.addPlot(title=conditions)
-    self.plot.plot(x_value, y_value, pen = {'color': "g", 'width': 2}, symbol='o', symbolPen=None, symbolSize=5, symbolBrush=(100, 100, 255, 50))
+    #make the line glow
+    alphas = np.linspace(25, 25, 10, dtype=int)
+    lws = np.linspace(1, 8, 10)
+    for alpha, lw in zip(alphas, lws):
+        pen = pg.mkPen(color='{}{:02x}'.format('#00ff41', alpha),
+                               width=lw,
+                               connect="finite")
+        self.plot.plot(x_value, y_value, pen = pen, clear=(lw==lws[0]))
     self.plot.setLabel('left', "Y Axis", units='A')
     self.plot.setLabel('bottom', "Y Axis", units='s')
     self.plot.setLogMode(x=self.checkBox_x.isChecked(), y=self.checkBox_y.isChecked())

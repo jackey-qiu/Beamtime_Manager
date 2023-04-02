@@ -969,17 +969,7 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLabel" name="label_41">
-                         <property name="text">
-                          <string>save columns</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QLineEdit" name="lineEdit_channels"/>
-                       </item>
-                       <item>
-                        <widget class="QPushButton" name="pushButton_6">
+                        <widget class="QPushButton" name="pushButton_save_local">
                          <property name="text">
                           <string>save locally</string>
                          </property>
@@ -1008,6 +998,16 @@
                           <string>overwrite</string>
                          </property>
                         </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_41">
+                         <property name="text">
+                          <string>save columns</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="lineEdit_channels"/>
                        </item>
                       </layout>
                      </item>

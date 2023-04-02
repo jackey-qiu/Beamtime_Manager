@@ -25,18 +25,6 @@ def error_pop_up(msg_text = 'error', window_title = ['Error','Information','Warn
     msg.setWindowTitle(window_title)
     msg.exec_()
 
-def map_chinese_to_eng_key(str_ch):
-    map_ = {'书名':'book_name',
-            '作者':'author',
-            '编号':'paper_id',
-            '状态':'status',
-            '类别':'class',
-            }
-    if str_ch in map_:
-        return map_[str_ch]
-    else:
-        return 'UNKNOWN'
-
 def extract_vars_from_config(config_file, section_var):
     import configparser
     config = configparser.ConfigParser()
@@ -92,7 +80,10 @@ class PandasModel(QtCore.QAbstractTableModel):
                     if self._data.iloc[index.row(), index.column()]:
                         return QtGui.QColor('red')
                     else:
-                        return QtGui.QColor('gray')
+                        if self.rgb_bkg!=None:
+                            return QtGui.QColor(*self.rgb_bkg)
+                        else:
+                            return QtGui.QColor('white')                        
                 else:
                     if self.rgb_bkg!=None:
                         return QtGui.QColor(*self.rgb_bkg)
