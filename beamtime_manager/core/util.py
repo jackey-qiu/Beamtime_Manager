@@ -64,11 +64,13 @@ class PandasModel(QtCore.QAbstractTableModel):
     """
     Class to populate a table view with a pandas dataframe
     """
-    def __init__(self, data, tableviewer, main_gui, parent=None):
+    def __init__(self, data, tableviewer, main_gui, parent=None, rgb_bkg = None, rgb_fg = None):
         QtCore.QAbstractTableModel.__init__(self, parent)
         self._data = data
         self.tableviewer = tableviewer
         self.main_gui = main_gui
+        self.rgb_bkg = rgb_bkg
+        self.rgb_fg = rgb_fg
 
     def rowCount(self, parent=None):
         return self._data.shape[0]
@@ -92,12 +94,18 @@ class PandasModel(QtCore.QAbstractTableModel):
                     else:
                         return QtGui.QColor('gray')
                 else:
-                    return QtGui.QColor('white')
+                    if self.rgb_bkg!=None:
+                        return QtGui.QColor(*self.rgb_bkg)
+                    else:
+                        return QtGui.QColor('white')
                 # return QtGui.QColor('aqua')
                 # return QtGui.QColor('lightGreen')
             # if role == QtCore.Qt.ForegroundRole and index.row()%2 == 1:
             if role == QtCore.Qt.ForegroundRole:
-                return QtGui.QColor('black')
+                if self.rgb_fg!=None:
+                    return QtGui.QColor(*self.rgb_fg)
+                else:
+                    return QtGui.QColor('black')
             if role == QtCore.Qt.CheckStateRole and index.column()==0:
                 if self._data.iloc[index.row(),index.column()]:
                     return QtCore.Qt.Checked
@@ -155,3 +163,18 @@ class PandasModel(QtCore.QAbstractTableModel):
                                         ascending=order == QtCore.Qt.AscendingOrder, ignore_index = True)
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(0), self.columnCount(0)))
         self.layoutChanged.emit()
+
+    def get_dict_from_data(self, ref_key = 'scan_id', selected_columns = None):
+        if selected_columns==None:
+            columns = [each for each in list(self._data.columns) if each!=ref_key]
+        else:
+            columns = selected_columns
+        vals = list(set(self._data[ref_key]))
+        return_result = []
+        for val in vals:
+            one = {ref_key:val}
+            index = self._data[self._data[ref_key]==val].index
+            for col in columns:
+                one[col] = list(self._data[col][index])
+            return_result.append(one)
+        return columns, vals, return_result

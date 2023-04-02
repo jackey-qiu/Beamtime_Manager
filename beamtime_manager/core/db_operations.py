@@ -144,7 +144,7 @@ def init_pandas_model_from_db(self, collection_records = None):
     data = pd.DataFrame(data)
     if 'select' in config.display_fields:
         data['select'] = data['select'].astype(bool)
-    self.pandas_model_scan_info = PandasModel(data = data, tableviewer = self.tableView_data_info, main_gui = self)
+    self.pandas_model_scan_info = PandasModel(data = data, tableviewer = self.tableView_data_info, main_gui = self, rgb_bkg=(25,35,45),rgb_fg=(200,200,200))
     self.tableView_data_info.setModel(self.pandas_model_scan_info)
     self.tableView_data_info.resizeColumnsToContents()
     self.tableView_data_info.setSelectionBehavior(PyQt5.QtWidgets.QAbstractItemView.SelectRows)
@@ -429,6 +429,63 @@ def add_scan_info(self, parser = None):
         init_pandas_model_from_db(self)
     except Exception as e:
         error_pop_up('Failure to append sample info! Due to:\n{}'.format(str(e)),'Error')  
+
+def load_processed_data_from_cloud(self):
+    results = list(self.database.data_info.find())
+    if len(results)==0:
+        return
+    results_pd = []
+    for each in results:
+        del each['_id']
+        num_items = len(each[[each_key for each_key in list(each.keys()) if each_key!='scan_id'][0]])
+        each['scan_id'] = [each['scan_id']]*num_items
+        if 'select' not in each:
+            each['select'] = [False]*num_items
+        columns = list(each.keys())
+        columns.remove('select')
+        columns = ['select'] + columns
+        results_pd.append(pd.DataFrame(each)[columns])
+    if not hasattr(self, 'pandas_model_processed_data_info'):
+        self.pandas_model_processed_data_info = PandasModel(data = pd.concat(results_pd, ignore_index=True), tableviewer = self.tableView_processed_data, main_gui = self, rgb_bkg=(25,35,45),rgb_fg=(200,200,200))
+        self.tableView_processed_data.setModel(self.pandas_model_processed_data_info)
+        self.tableView_processed_data.resizeColumnsToContents()
+        self.tableView_processed_data.setSelectionBehavior(PyQt5.QtWidgets.QAbstractItemView.SelectRows)
+        self.tableView_processed_data.horizontalHeader().setStretchLastSection(True)
+    else:
+        self.pandas_model_processed_data_info._data = pd.concat(results_pd, ignore_index=True)
+
+def save_processed_data_to_cloud(self):
+    #overwrite or not
+    reply = QMessageBox.question(self, 'Message', 'Update processed data info to cloud?', QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+    if reply == QMessageBox.Yes:
+        try:
+            overwrite = self.radioButton_overwrite.isChecked()
+            save_channels = self.lineEdit_channels.text().replace(' ','').rsplit(',')
+            if save_channels==['']:
+                save_channels = None
+            save_channels, field_values, return_list = self.pandas_model_processed_data_info.get_dict_from_data(
+                                                                        ref_key = 'scan_id', 
+                                                                        selected_columns = save_channels)
+            for val in field_values:
+                scan_info = self.database.data_info.find_one({'scan_id':val})
+                new_scan_info = return_list[field_values.index(val)]
+                if scan_info != None:
+                    if overwrite:
+                        self.database.data_info.replace_one(scan_info, new_scan_info)
+                    else:
+                        temp_values = [{ '$each': new_scan_info[channel] } for channel in save_channels]
+                        final_mongo_query = dict(zip(save_channels, temp_values))
+                        self.database.data_info.update_one(
+                            { 'scan_id': val },
+                            { '$push': final_mongo_query })
+                else:
+                    self.database.data_info.insert_one(new_scan_info)
+            self.statusbar.clearMessage()
+            self.statusbar.showMessage('Success to update processed data to cloud!')
+        except Exception as e:
+            error_pop_up('Failed to update to cloud due to:'+str(e))
+    else:
+        pass
 
 def general_query_by_field(self, field, query_string, target_field, collection_name, database = None):
     """

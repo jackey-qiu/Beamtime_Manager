@@ -953,6 +953,65 @@
                     </attribute>
                     <layout class="QVBoxLayout" name="verticalLayout_8">
                      <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_11">
+                       <item>
+                        <widget class="QPushButton" name="pushButton_load_from_cloud">
+                         <property name="text">
+                          <string>Load cloud data</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButton_load_data_locally">
+                         <property name="text">
+                          <string>Load  local data</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_41">
+                         <property name="text">
+                          <string>save columns</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="lineEdit_channels"/>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButton_6">
+                         <property name="text">
+                          <string>save locally</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButton_save_cloud">
+                         <property name="text">
+                          <string>save remote</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QRadioButton" name="radioButton_append">
+                         <property name="text">
+                          <string>append</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QRadioButton" name="radioButton_overwrite">
+                         <property name="text">
+                          <string>overwrite</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                     <item>
                       <widget class="QTableView" name="tableView_processed_data">
                        <property name="font">
                         <font>
@@ -966,145 +1025,87 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QGroupBox" name="groupBox">
-                       <property name="font">
-                        <font>
-                         <pointsize>10</pointsize>
-                        </font>
-                       </property>
-                       <property name="title">
-                        <string>DataHandlers</string>
-                       </property>
-                       <layout class="QVBoxLayout" name="verticalLayout_9">
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_11">
-                          <item>
-                           <widget class="QPushButton" name="pushButton">
-                            <property name="text">
-                             <string>Cloud data</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="pushButton_load_data_locally">
-                            <property name="text">
-                             <string> Local data</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="pushButton_4">
-                            <property name="text">
-                             <string>save remote</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="pushButton_6">
-                            <property name="text">
-                             <string>save locally</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <spacer name="horizontalSpacer_4">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>40</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
-                          <item>
-                           <spacer name="horizontalSpacer_2">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>40</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
-                          <item>
-                           <widget class="QLabel" name="label_25">
-                            <property name="text">
-                             <string>x</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLineEdit" name="lineEdit_x"/>
-                          </item>
-                          <item>
-                           <widget class="QLabel" name="label_37">
-                            <property name="text">
-                             <string>y</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLineEdit" name="lineEdit_y"/>
-                          </item>
-                          <item>
-                           <widget class="QCheckBox" name="checkBox">
-                            <property name="text">
-                             <string>log(x)</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QCheckBox" name="checkBox_2">
-                            <property name="text">
-                             <string>log(y)</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="pushButton_plot">
-                            <property name="text">
-                             <string>plot</string>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </item>
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_8">
-                          <item>
-                           <widget class="QLabel" name="label_38">
-                            <property name="text">
-                             <string>scans to be use for plotting</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLineEdit" name="lineEdit_3">
-                            <property name="whatsThis">
-                             <string>comma seperated scan ids</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLabel" name="label_39">
-                            <property name="text">
-                             <string>conditions for extracting data (use &amp; for and logic)</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QLineEdit" name="lineEdit_conditions"/>
-                          </item>
-                         </layout>
-                        </item>
-                       </layout>
-                      </widget>
+                      <layout class="QHBoxLayout" name="horizontalLayout_8">
+                       <item>
+                        <widget class="QLabel" name="label_38">
+                         <property name="text">
+                          <string>scans</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="lineEdit_3">
+                         <property name="whatsThis">
+                          <string>comma seperated scan ids</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_39">
+                         <property name="text">
+                          <string>conditions</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="lineEdit_conditions"/>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_25">
+                         <property name="text">
+                          <string>x</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="lineEdit_x">
+                         <property name="maximumSize">
+                          <size>
+                           <width>50</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_37">
+                         <property name="text">
+                          <string>y</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLineEdit" name="lineEdit_y">
+                         <property name="maximumSize">
+                          <size>
+                           <width>50</width>
+                           <height>16777215</height>
+                          </size>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="checkBox_x">
+                         <property name="text">
+                          <string>log(x)</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="checkBox_y">
+                         <property name="text">
+                          <string>log(y)</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButton_plot">
+                         <property name="text">
+                          <string>plot</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </item>
                     </layout>
                    </widget>

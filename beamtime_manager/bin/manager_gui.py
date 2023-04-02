@@ -40,6 +40,8 @@ class MyMainWindow(QMainWindow):
         self.pushButton_select_none.clicked.connect(lambda:gui.select_none(self))
         self.pushButton_load_data_locally.clicked.connect(lambda:gui.load_csv_file(self))
         self.pushButton_plot.clicked.connect(lambda:gui.plot_processed_data(self))
+        self.pushButton_save_cloud.clicked.connect(lambda:db.save_processed_data_to_cloud(self))
+        self.pushButton_load_from_cloud.clicked.connect(lambda:db.load_processed_data_from_cloud(self))
 
 @click.command()
 @click.option('--ui', default='beamtime_manager.ui',help="main gui ui file generated from Qt Desinger, possible ui files are :")

@@ -40,7 +40,7 @@ def load_csv_file(self, header = 0, sep = ','):
     if fileName:
         data = pd.read_csv(fileName, sep = ',', header = 0)
         data.insert(0, column = 'select', value = False)
-        self.pandas_model_processed_data_info = PandasModel(data = data, tableviewer = self.tableView_processed_data, main_gui = self)
+        self.pandas_model_processed_data_info = PandasModel(data = data, tableviewer = self.tableView_processed_data, main_gui = self, rgb_bkg=(25,35,45),rgb_fg=(200,200,200))
         self.tableView_processed_data.setModel(self.pandas_model_processed_data_info)
         self.tableView_processed_data.resizeColumnsToContents()
         self.tableView_processed_data.setSelectionBehavior(PyQt5.QtWidgets.QAbstractItemView.SelectRows)
@@ -60,9 +60,9 @@ def plot_processed_data(self):
     y_value = np.array(self.pandas_model_processed_data_info._data[y][index])
     self.widget_plot.clear()
     self.plot = self.widget_plot.addPlot(title=conditions)
-    self.plot.plot(x_value, y_value, pen = {'color': "g", 'width': 2}, symbol='+', symbolPen=None, symbolSize=5, symbolBrush=(100, 100, 255, 50))
+    self.plot.plot(x_value, y_value, pen = {'color': "g", 'width': 2}, symbol='o', symbolPen=None, symbolSize=5, symbolBrush=(100, 100, 255, 50))
     self.plot.setLabel('left', "Y Axis", units='A')
     self.plot.setLabel('bottom', "Y Axis", units='s')
-    self.plot.setLogMode(x=False, y=True)
+    self.plot.setLogMode(x=self.checkBox_x.isChecked(), y=self.checkBox_y.isChecked())
 
 
