@@ -10,6 +10,14 @@ from pathlib import Path
 import PyQt5
 import pandas as pd
 from functools import partial
+import logging
+
+logger = logging.getLogger(__name__)
+logger.propagate = True
+f_handler = logging.FileHandler('db_operation.log', mode = 'w')
+f_handler.setFormatter(logging.Formatter('%(levelname)s : %(name)s : %(message)s : %(asctime)s : %(lineno)d'))
+f_handler.setLevel(logging.DEBUG)
+logger.addHandler(f_handler)
 
 def start_mongo_client_cloud(self):
     try:
@@ -21,11 +29,14 @@ def start_mongo_client_cloud(self):
             env = load_dotenv(str(Path(__file__).parent.parent/ "resources" / "private" / "atlas_password.dot"))
             if env:
                 url = os.getenv('ATLAS_URL') 
-                login_dialog(self, url)
-                #self.mongo_client = MongoClient(url,tlsCAFile=certifi.where())
-            else:
-                url = ''
-                print('something is wrong')
+                if not url:
+                    logger.error('could not load enviroment variable from atlas_password.dot')
+                    print('something is wrong')
+                else:
+                    logger.info('fire up login dialog')
+                    login_dialog(self, url)
+                    logger.info('finish login operation.')
+                    #self.mongo_client = MongoClient(url,tlsCAFile=certifi.where())
     except Exception as e:
         error_pop_up('Fail to start mongo client.'+'\n{}'.format(str(e)),'Error')
 

@@ -6,13 +6,24 @@ from PyQt5.QtWidgets import QMainWindow,QApplication, QLabel
 sys.path.append(str(Path(__file__).parent.parent.parent))
 import beamtime_manager.core.db_operations as db
 import beamtime_manager.core.gui_operations as gui
+import logging
+logging.basicConfig(filemode='w', filename= 'app.log', level=logging.INFO,\
+                    format='%(levelname)s : %(name)s : %(message)s : %(asctime)s : %(lineno)d')
+logger = logging.getLogger('')
+f_handler = logging.FileHandler('app2.log',mode = 'w')
+f_handler.setLevel(logging.INFO)
+f_handler.setFormatter(logging.Formatter('%(levelname)s : %(name)s : %(message)s : %(asctime)s : %(lineno)d'))
+logger.addHandler(f_handler)
 
 class MyMainWindow(QMainWindow):
     def __init__(self, parent = None):
         super(MyMainWindow, self).__init__(parent)
         self.db_operations = db
+        logger.info('App is started successfully!')
+        logging.info('Log once more!')
 
     def init_gui(self, ui):
+        logger.info('Start init gui widgets!')
         self.ui = ui
         uic.loadUi(ui, self)
         gui.populate_config_template_files(self)
@@ -43,6 +54,7 @@ class MyMainWindow(QMainWindow):
         self.pushButton_plot.clicked.connect(lambda:gui.plot_processed_data(self))
         self.pushButton_save_cloud.clicked.connect(lambda:db.save_processed_data_to_cloud(self))
         self.pushButton_load_from_cloud.clicked.connect(lambda:db.load_processed_data_from_cloud(self))
+        logger.info('Finish setting gui widgets!')
 
 @click.command()
 @click.option('--ui', default='beamtime_manager.ui',help="main gui ui file generated from Qt Desinger, possible ui files are :")
